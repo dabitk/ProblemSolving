@@ -1,0 +1,59 @@
+public class CHRISTMAS {
+	static final int MOD = 20091101;
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int C = Integer.parseInt(br.readLine());
+		while(C-->0) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int N = Integer.parseInt(st.nextToken());
+			int K = Integer.parseInt(st.nextToken());
+			st = new StringTokenizer(br.readLine());
+			int[] arr = new int[st.countTokens()];
+			int i = 0;
+			while(st.hasMoreTokens()) {
+				arr[i] = Integer.parseInt(st.nextToken());
+				i++;
+			}
+			//System.out.println(Arrays.toString(arr));
+			long[] prefixSum = new long[arr.length+1];
+			for(i = 1; i < prefixSum.length; i++) {
+				prefixSum[i] += (arr[i-1] + prefixSum[i-1]) % K;
+			}
+			//System.out.println(Arrays.toString(prefixSum));
+			System.out.print(waysToBuy(prefixSum, K) + " "+maxBuys(prefixSum, K));
+		}
+	}
+	
+	static int waysToBuy(long[] prefixSum, int k) {
+		long[] count = new long[k]; //prefixSum의 각 원소의 등장 횟수.
+		int ret = 0;
+		for(int i=0;i<prefixSum.length;i++) {
+			count[(int) prefixSum[i]]++;
+		}
+		//count[i] C 2 -> 2번 이상 등장한 값 중 2개를 선택하는 조합의 수를 더함.
+		for(int i = 0; i < k; i++) {
+			if(count[i] >= 2) {
+				ret = (int) ((ret + ((count[i] * (count[i] - 1)) / 2)) % MOD);
+			}
+		}
+		return ret;
+	}
+	
+	//겹치지 않게 몇 번이나 살 수 있는지 반환한다.
+	static int maxBuys(long[] prefixSum, int k) {
+		int[] ret = new int[prefixSum.length];
+		int[] prev = new int[k];
+		Arrays.fill(prev, -1);
+		for(int i = 0; i < prefixSum.length; i++) {
+			if(i > 0) {
+				ret[i] = ret[i-1];
+			}else {
+				ret[i] = 0;
+			}
+			int loc = prev[(int) prefixSum[i]];
+			if(loc != -1) ret[i] = Math.max(ret[i], ret[loc]+1);
+			prev[(int) prefixSum[i]] = i;
+		}
+		return ret[ret.length-1];
+	}
+}
