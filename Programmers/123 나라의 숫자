@@ -1,0 +1,35 @@
+import java.util.*;
+class Solution {
+     public String solution(int n) {
+        List<Integer> arr = new ArrayList<>();
+        int q = n;
+        int r = Integer.MAX_VALUE;
+while(q >= 3){
+            q = (int)Math.floor(q / 3);
+            r = n % 3;
+            System.out.println(q);
+            System.out.println(r);
+            if(r == 0){
+                q-=1;
+                arr.add(0, 4);
+            }else{
+                arr.add(0, r);
+            }
+            n = q;
+        }
+        if(q != 0){
+            arr.add(0, q);
+        }
+        
+        String[] answer = new String[arr.size()];
+        for(int i=0; i<arr.size(); i++){
+            answer[i] = arr.get(i).toString();
+        }
+         
+        StringBuilder sb = new StringBuilder();
+        for (String str : answer){
+            sb.append(str);
+        }
+     return sb.substring(0, sb.length());
+    }
+}
