@@ -1,0 +1,32 @@
+import java.util.Stack;
+
+class Solution {
+    public int[] solution(int[] prices) {
+        int[] answer = new int[prices.length];
+        Stack<int[]> stack = new Stack<int[]>();
+        
+        for(int i=prices.length-2;i>=0;i--){
+            if(prices[i]>prices[i+1]){
+                answer[i] = 1;
+                stack.push(new int[]{prices[i+1], i+1}); //값과 그 인덱스를 저장.
+            }else{ //앞쪽의 숫자가 뒤쪽의 숫자보다 같거나 작을 경우 
+                //스택에서 자기보다 작은 값이 나올때까지 값을 계속 지워준다.
+                while(stack.size() > 0 && stack.peek()[0] >= prices[i]){
+                    stack.pop();
+                }
+                
+                //뒤쪽의 모든 값들이 현재 보고 있는 값보다 큰 경우 (스택이 빈 경우)
+                if(stack.size() == 0){
+                    answer[i] = prices.length - i - 1;
+                }else{
+                    //스택에 자신보다 작은 값이 남아있다면
+                    //해당 인덱스와 현재 i값을 이용해서 계산
+                    answer[i] = stack.peek()[1] - i;
+                }
+            }
+            
+        }
+        
+        return answer;
+    }
+}
