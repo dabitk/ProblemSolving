@@ -1,0 +1,150 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Main {
+    static int N; //세로
+    static int M; //가로
+    static int[][] maps; //지도
+    static boolean[][] visited;
+    
+    //바이러스 움직임 (상하좌우)
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
+    
+    static List<int[]> virusLocation = new ArrayList<>(); //바이러스 좌표
+    
+    static int max_safe = 0;
+    
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        String str;
+        str = br.readLine();
+        N = Integer.parseInt(str.split(" ")[0]);
+        M = Integer.parseInt(str.split(" ")[1]);
+        
+        maps = new int[N][M];
+        visited = new boolean[N][M];
+        
+        StringTokenizer st;
+        for (int i = 0; i < N; i++) {
+            str = br.readLine();
+            st = new StringTokenizer(str, " ");
+            for (int j = 0; j < M; j++) {
+                maps[i][j] = Integer.parseInt(st.nextToken());
+                
+                if(maps[i][j] == 2) {
+                	virusLocation.add(new int[] {i, j});
+                }
+            }
+        }
+        
+        dfs(0);
+        
+        System.out.println(max_safe);
+    }
+    
+    public static int[][] copyMap() {
+        int[][] copy_maps = new int[N][M];
+        
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                copy_maps[i][j] = maps[i][j];
+            }
+        }
+        return copy_maps;
+    }
+    
+    //바이러스 퍼지는 것을 bfs로 구현
+    public static int[][] bfs(int[][] copy_maps, boolean[][] visited) {
+        
+        Queue<int[]> q = new LinkedList<>();
+        
+        //처음 바이러스 좌표를 Queue에 넣어줌
+        int[] loc = new int[2];
+        for (int i = 0; i < virusLocation.size(); i++) {
+            loc = virusLocation.get(i);
+            q.offer(new int[]{loc[0], loc[1]});
+            visited[loc[0]][loc[1]] = true;
+        }
+        
+        // 현재 바이러스 위치
+        int cx, cy;
+        int nx, ny;
+        int[] tempLoc;
+        while(!q.isEmpty()) {
+            tempLoc = q.poll();
+            cx = tempLoc[0];
+            cy = tempLoc[1];
+            
+            for (int i = 0; i < 4; i++) {
+                nx = dx[i] + cx;
+                ny = dy[i] + cy;
+                
+                //범위 넘어가는지 확인
+                if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
+                
+                if (!visited[nx][ny]) {
+                    if (copy_maps[nx][ny] == 0) {
+                        visited[nx][ny] = true;
+                        copy_maps[nx][ny] = 2;
+                        q.offer(new int[]{nx, ny});
+                    }
+                }
+            }
+        }
+        return copy_maps;
+    }
+    
+    public static void dfs(int cnt) {
+        //벽의 갯수가 3개가 됬을 때
+        if (cnt == 3) {
+            int[][] copy_maps = new int[N][M];
+            
+            //맵 복사
+            copy_maps = copyMap();
+            
+            //바이러스 다 퍼트리고
+            boolean[][] visited = new boolean[N][M];
+            copy_maps = bfs(copy_maps, visited);
+            
+            int safe = 0;
+            //안전 지역 갯수 구하고 (빈 칸의 갯수)
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++) {
+                    if(copy_maps[i][j] == 0)
+                        safe++;
+                }
+            }
+            
+            // 안전지역 최댓값 구함
+            max_safe = Math.max(max_safe, safe);
+        } else {
+            //벽의 갯수 dfs 탐색으로 늘려줌.
+            for (int i = 0; i < maps.length; i++) {
+                for (int j = 0; j < maps[i].length; j++) {
+                    //벽이나 바이러스일 경우
+                    if (maps[i][j] == 1 || maps[i][j] == 2) continue;
+                    //빈칸일 경우
+                    else {
+                        //방문하지 않은 경우
+                        if(!visited[i][j]) {
+                            //빈칸에 벽을 세워줌
+                            visited[i][j] = true;
+                            maps[i][j] = 1;
+                            dfs(cnt+1);
+                            maps[i][j] = 0;
+                            visited[i][j] = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
