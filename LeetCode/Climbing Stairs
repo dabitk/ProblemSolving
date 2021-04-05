@@ -1,0 +1,22 @@
+class Solution {
+    public int climbStairs(int n) {
+        int cache[] = new int[n + 1];
+        return recursion(0, n, cache);
+    }
+    public int recursion(int i, int n, int cache[]) {
+        //i = 현재 위치 (사다리)
+        //n = 최고 높이 (목적지)
+        //cache = 메모이제이션 배열
+        if (i > n) {
+            return 0;
+        }
+        if (i == n) {
+            return 1;
+        }
+        if (cache[i] > 0) {
+            return cache[i];
+        }
+        cache[i] = recursion(i + 1, n, cache) + recursion(i + 2, n, cache);
+        return cache[i];
+    }
+}
