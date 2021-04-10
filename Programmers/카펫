@@ -1,0 +1,32 @@
+class Solution {
+    public int[] solution(int brown, int yellow) {
+        int[] answer = new int[2];
+        
+        //가로 최대 = ?
+        //세로 최대 = ?
+        //가로 >= 세로
+        
+        //둘레 = 2*n + 2*(m-2) == brown -> m + n = (brown + 4)/2
+        
+        //yellow = (n-2) * (m-2)
+        
+        //둘레
+        int size = (brown+4) / 2;
+        //세로
+        int m = 3;
+        //가로
+        int n = size - m;
+        
+        while(n >= 3 && n >= m) {
+            if((n-2) * (m-2) == yellow) {
+                answer[0] = n;
+                answer[1] = m;
+                break;
+            }
+            n--;
+            m++;
+        }
+
+        return answer;
+    }
+}
