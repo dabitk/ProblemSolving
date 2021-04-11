@@ -1,0 +1,27 @@
+import java.util.*;
+import java.lang.*;
+import java.time.*;
+
+class Solution {
+    public String solution(int a, int b) {
+        String answer = "";
+        LocalDate date = LocalDate.of(2016,a,b);
+        switch (date.getDayOfWeek()) {
+            case SUNDAY :
+                return "SUN";
+            case MONDAY :
+                return "MON";
+            case TUESDAY :
+                return "TUE";
+            case WEDNESDAY :
+                return "WED";
+            case THURSDAY :
+                return "THU";
+            case FRIDAY :
+                return "FRI";
+            case SATURDAY :
+                return "SAT";
+        }
+        return answer;
+    }
+}
