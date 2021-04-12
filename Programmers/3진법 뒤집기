@@ -1,0 +1,17 @@
+class Solution {
+    public int solution(int n) {
+        int answer = 0;
+        StringBuilder sb = new StringBuilder();
+        int remainder = -1;
+        int tmp = n;
+        while(tmp >= 3) {
+            remainder = tmp % 3;
+            tmp = tmp / 3;
+            sb.append(remainder);
+        }
+        sb.append(tmp);
+        String result = sb.toString();
+        int ret = Integer.parseInt(result,3);
+        return ret;
+    }
+}
