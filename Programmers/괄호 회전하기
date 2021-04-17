@@ -1,0 +1,55 @@
+import java.util.*;
+
+class Solution {
+    public int solution(String s) {
+        int answer = 0;
+        int n = s.length();
+        String tmp = s;
+        for(int i = 0; i < n; i++) {
+            if(validate(tmp)){
+                answer++;
+            }
+            tmp = tmp.substring(1)+tmp.charAt(0);
+        }
+        return answer;
+    }
+    
+    public boolean validate(String s) {
+        Stack<Character> st = new Stack<Character>();
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (st.isEmpty()){
+                st.add(c);
+            } else {
+                switch(c) {
+                    case ']':
+                        if(st.peek() == '[') {
+                            st.pop();
+                            break;
+                        } else {
+                            return false;
+                        }
+                    case '}':
+                        if(st.peek() == '{') {
+                            st.pop();
+                            break;
+                        } else {
+                            return false;
+                        }
+                    case ')':
+                        if(st.peek() == '(') {
+                            st.pop();
+                            break;
+                        } else {
+                            return false;
+                        }
+                    default :
+                        st.add(c);
+                        break;
+                }
+            }
+        }
+        
+        return st.isEmpty() ? true : false;
+    }
+}
