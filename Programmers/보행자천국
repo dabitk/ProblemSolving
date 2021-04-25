@@ -1,0 +1,38 @@
+class Solution {
+    int MOD = 20170805;
+    public int solution(int m, int n, int[][] cityMap) {
+        int answer = 0;
+        
+        int[][] rightArr = new int[m+1][n+1];
+        int[][] downArr = new int[m+1][n+1];
+        
+        //첫 출발지 1로 초기화
+        rightArr[1][1] = 1;
+        downArr[1][1] = 1;
+        
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                //지나갈 수 있는 경우
+                if (cityMap[i-1][j-1] == 0) {
+                    //바로 왼쪽에서 오른쪽으로 향하는 경우의 수와 바로 위쪽에서 아래쪽으로 향하는 경우의 수
+                    //두 경우의 수를 더한 값이 현재 위치의 경우의 수
+                    int cnt = (rightArr[i][j-1] + downArr[i-1][j]) % MOD;
+                    rightArr[i][j] += cnt;
+                    downArr[i][j] += cnt;
+                    //지나갈 수 없는 경우 0
+                } else if (cityMap[i-1][j-1] == 1){
+                    rightArr[i][j] = 0;
+                    downArr[i][j] = 0;
+                    //방향 전환을 할 수 없는 경우
+                } else {
+                    //바로 위쪽의 경우의 수를 그대로 넣고
+                    downArr[i][j] = downArr[i-1][j];
+                    //바로 왼쪽의 경우의 수를 그대로 넣는다.
+                    rightArr[i][j] = rightArr[i][j-1];
+                }
+            }
+        }
+        answer = (downArr[m-1][n] + rightArr[m][n-1]) % MOD;
+        return answer;
+    }
+}
