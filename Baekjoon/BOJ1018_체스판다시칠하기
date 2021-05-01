@@ -1,0 +1,66 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class BOJ1018 {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int N = Integer.parseInt(st.nextToken());
+		int M = Integer.parseInt(st.nextToken());
+		char[][] arr = new char[N][M];
+		for(int i = 0 ; i < N; i++) {
+			arr[i] = br.readLine().toCharArray();
+		}
+		int min = Integer.MAX_VALUE;
+		for(int i = 0; i <= N - 8; i++) {
+			for(int j = 0; j <= M - 8; j++) {
+				int cnt = 0;
+				for(int r = i; r < i+8; r++) {
+					for(int c = j; c < j+8; c++) {
+						if(r % 2 == 0) {
+							//행이 짝수.
+							if (c % 2 == 0) {
+								//열이 짝수
+								//이 경우는 시작 글자와 동일하지 않으면 문자 변경 대상이므로 카운트 + 1
+								if('B' != arr[r][c]) {
+									cnt++;
+								}
+							} else {
+								//열이 홀수
+								//이 경우는 시작 글자와 동일하면 문자 변경 대상이으로 카운트 + 1
+								if('B' == arr[r][c]) {
+									cnt++;
+								}
+							}
+						} else {
+							//행이 홀수
+							if (c % 2 == 0) {
+								//열이 짝수
+								if('B' == arr[r][c]) {
+									cnt++;
+								}
+							} else {
+								//열이 홀수
+								if('B' != arr[r][c]) {
+									cnt++;
+								}
+							}
+						}
+					}
+				}
+				//System.out.println(cnt);
+				min = Math.min(min, cnt);
+				min = Math.min(min, 64 - cnt);
+			}
+		}
+		
+		
+		System.out.println(min);
+	}
+
+}
