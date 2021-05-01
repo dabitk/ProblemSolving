@@ -1,0 +1,34 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int N = Integer.parseInt(st.nextToken());
+		int cnt = 0;
+		int[] arr = new int[10001];
+		for(int i = 0; i < N; i++) {
+			int num = Integer.parseInt(br.readLine());
+			arr[num]++;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = 1; i < arr.length; i++) {
+			while(arr[i] != 0) {
+				arr[i]--;
+				sb.append(i+"\n");
+			}
+		}
+		
+		System.out.println(sb.toString());
+        br.close();
+	}
+
+}
