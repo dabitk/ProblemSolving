@@ -1,0 +1,177 @@
+package BaekJoon;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class BOJ2580 {
+	//static ArrayList<Integer> list = new ArrayList<>();
+	//static int N, M;
+	static StringBuilder sb = new StringBuilder();
+	static int[][] board = new int[9][9];
+	static int zeroCount = 0;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = null;
+		String line = null;
+		int row = 0;
+		int col = 0;
+		for(int i = 0; i < 9; i++) {
+			st = new StringTokenizer(br.readLine());
+			col = 0;
+			while(st.hasMoreElements()) {
+				int a = Integer.parseInt(st.nextToken());
+				board[row][col++] = a;
+				if(a == 0) {
+					zeroCount++;
+				}
+			}
+			row++;
+		}
+		
+//		for(int[] a : board) {
+//			for(int b : a) {
+//				System.out.print(b+" ");
+//			}
+//			System.out.println();
+//		}
+//		System.out.println(zeroCount);
+		backtracking(0,0,board);
+		
+//		System.out.println(horizontalCheck(2,0,board));
+//		System.out.println(verticalCheck(1,0,board));
+//		System.out.println(areaCheck(1,0,0,board));
+		//System.out.println(sb);
+		br.close();
+
+	}
+	
+	public static int[][] deepCopyIntMatrix(int[][] input) {
+	    if (input == null)
+	        return null;
+	    int[][] result = new int[input.length][];
+	    for (int r = 0; r < input.length; r++) {
+	        result[r] = input[r].clone();
+	    }
+	    return result;
+	}
+	
+	public static void backtracking(int row, int col, int[][] tmp) {
+		int[][] currentBoard = deepCopyIntMatrix(tmp); //2차원 배열 깊은 복사.
+		if(zeroCount == 0) {
+			//보드 마지막까지 왔다면 보드 출력하고 리턴.
+			for(int i = 0; i < currentBoard.length; i++) {
+				for(int j = 0; j < currentBoard[i].length; j++) {
+					sb.append(currentBoard[i][j] + " ");
+				}
+				sb.append("\n");
+			}
+			System.out.print(sb);
+			System.exit(0);
+		}
+		
+		
+//		for(int i = 0; i < currentBoard.length; i++) {
+//			for(int j = 0; j < currentBoard[i].length; j++) {
+//				System.out.print(currentBoard[i][j] + " ");
+//			}
+//			System.out.println();
+//		}
+//
+//		System.out.println("==============");
+		
+		
+		for(int i = 0; i < 9; i++) {
+			for(int j = 0; j < 9; j++) {
+				if(currentBoard[i][j] == 0) {
+					for(int k = 1; k <= 9; k++) {
+						if(horizontalCheck(k,i,currentBoard) && verticalCheck(k,j,currentBoard) && areaCheck(k, i, j, currentBoard)) {
+							currentBoard[i][j] = k;
+//							System.out.println("i:"+i+" j:"+j+" k"+k);
+							zeroCount--;
+							backtracking(i, j, currentBoard);
+//							zeroCount++;
+//							currentBoard[i][j] = 0;
+						}
+					}
+					
+				}
+			}
+		}
+	}
+	public static boolean horizontalCheck(int num, int row, int[][] tmp) {
+		for(int i = 0; i < tmp[row].length; i++) {
+			if(tmp[row][i] == 0) continue;
+			if(tmp[row][i] == num) return false;	
+		}
+		return true;
+	}
+
+	public static boolean verticalCheck(int num, int col, int[][] tmp) {
+		for(int i = 0; i < tmp.length; i++) {
+			if(tmp[i][col] == 0) continue;
+			if(tmp[i][col] == num) return false;	
+		}
+		return true;
+	}
+	
+	public static boolean areaCheck(int num, int row, int col, int[][] tmp) {
+		int area = 0;
+		if(row >= 0 && row < 3 && col >= 0 && col < 3) {
+			area = 1;
+		} else if (row >= 3 && row < 6 && col >= 3 && col < 6) {
+			area = 5;
+		} else if (row >= 6 && row < 9 && col >= 6 && col < 9) {
+			area = 9;
+		} else if (row >= 0 && row < 3 && col >= 3 && col < 6) {
+			area = 2;
+		} else if (row >= 0 && row < 3 && col >= 6 && col < 9) {
+			area = 3;
+		} else if (row >= 3 && row < 6 && col >= 0 && col < 3) {
+			area = 4;
+		} else if (row >= 3 && row < 6 && col >= 6 && col < 9) {
+			area = 6;
+		} else if (row >= 6 && row < 9 && col >= 0 && col < 3) {
+			area = 7;
+		} else if (row >= 6 && row < 9 && col >= 3 && col < 6) {
+			area = 8;
+		}
+		
+		switch(area) {
+			case 1:
+				return areaCheck2(num, 0, 0, tmp);
+			case 2:
+				return areaCheck2(num, 0, 3, tmp);
+			case 3:
+				return areaCheck2(num, 0, 6, tmp);
+			case 4:
+				return areaCheck2(num, 3, 0, tmp);
+			case 5:
+				return areaCheck2(num, 3, 3, tmp);
+			case 6:
+				return areaCheck2(num, 3, 6, tmp);
+			case 7:
+				return areaCheck2(num, 6, 0, tmp);
+			case 8:
+				return areaCheck2(num, 6, 3, tmp);
+			case 9:
+				return areaCheck2(num, 6, 6, tmp);
+		}
+		
+		
+		
+		return true;
+	}
+	
+	public static boolean areaCheck2(int num, int row, int col, int[][] tmp) {
+		for(int i = row; i < row+3; i++) {
+			for(int j = col; j < col+3; j++) {
+				if(tmp[row][col] == 0) continue;
+				if(tmp[row][col] == num) return false;
+			}
+		}
+		return true;
+	}
+}
