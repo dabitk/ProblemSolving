@@ -1,0 +1,44 @@
+package BaekJoon;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class BOJ15651 {
+	static ArrayList<Integer> list = new ArrayList<>();
+	static int N, M;
+	static StringBuilder sb = new StringBuilder();
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		
+		permutation(0);
+		
+		System.out.println(sb);
+		br.close();
+
+	}
+	
+	public static void permutation(int r) {
+		if(r == M) {
+			for(int num : list) {
+				sb.append(num).append(' ');
+			}
+			sb.append('\n');
+			return;
+		}
+		for(int i = 1; i <= N; i++) {
+			r++;
+			list.add(i);
+			permutation(r);
+			list.remove(list.size()-1);
+			r--;
+		}
+
+	}
+}
