@@ -1,0 +1,38 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class Main {
+	static ArrayList<Integer> list = new ArrayList<>();
+	static int N, M;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+
+		permutation(1,0);
+
+	}
+	
+	public static void permutation(int idx, int r) {
+		if(r == M) {
+			for(int num : list) {
+				System.out.print(num+" ");
+			}
+			System.out.println();
+			return;
+		}
+		for(int i = idx; i <= N; i++) {
+			r++;
+			list.add(i);
+			permutation(i+1, r);
+			list.remove(list.size()-1);
+			r--;
+		}
+
+	}
+}
