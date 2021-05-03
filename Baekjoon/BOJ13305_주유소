@@ -1,0 +1,39 @@
+package BaekJoon;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+public class BOJ13305 {
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int[] dist = new int[N-1];
+		for(int i = 0; i < N-1; i++) {
+			dist[i] = Integer.parseInt(st.nextToken());
+		}
+		
+		st = new StringTokenizer(br.readLine());
+		int[] price = new int[N];
+		for(int i = 0; i < N; i++) {
+			price[i] = Integer.parseInt(st.nextToken());
+		}
+		
+		int localMin = Integer.MAX_VALUE;
+		int sum = 0;
+		int j = 0;
+		for(int i = 0; i < N-1; i++) {
+			if(i == 0) {
+				sum += price[i] * dist[j++];
+				localMin = Math.min(localMin, price[i]);
+			} else {
+				localMin = Math.min(localMin, price[i]);
+				sum += localMin * dist[j++];
+			}
+		}
+		System.out.println(sum);
+	}
+}
