@@ -1,0 +1,44 @@
+package BaekJoon;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class BOJ2805 {
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		int N = Integer.parseInt(st.nextToken());
+		int M = Integer.parseInt(st.nextToken());
+		
+		long[] arr = new long[N];
+		st = new StringTokenizer(br.readLine());
+		long max = (long) 1e10;
+		for (int i = 0; i < N; i++) {
+			arr[i] = Integer.parseInt(st.nextToken());
+			max = Math.max(max, arr[i]);
+		}
+		long left = 1;
+		long right = max;
+		long mid = 0;
+		while(left <= right) {
+			mid = (right+left) / 2;
+			long subSum = 0;
+			for(int i = 0; i < arr.length; i++) {
+				if(arr[i] <= mid) subSum += 0;
+				else subSum += arr[i] - mid;
+			}
+			//System.out.println(mid+" "+subSum);
+			if(subSum == M) {
+				right = mid;
+				break;
+			} else if (subSum > M) {
+				left = mid+1;
+			} else {
+				right = mid-1;
+			}
+		}
+		System.out.println(right);
+	}
+}
