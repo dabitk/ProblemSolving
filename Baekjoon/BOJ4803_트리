@@ -6,8 +6,9 @@ import java.util.StringTokenizer;
 
 public class BOJ4803 {
 	static int[] arr;
+	static Set<Integer> hs;
 	public static int find(int A) {
-		if(arr[A] == A) return arr[A];
+		if(arr[A] == A) return A;
 		return arr[A] = find(arr[A]);
 	}
 	public static void union(int A, int B) {
@@ -25,14 +26,15 @@ public class BOJ4803 {
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = null;
-		String line = "";
+		StringBuilder sb = new StringBuilder();
+		int tc = 1;
 		loop:
-		while(!(line = br.readLine()).equals("0 0")) {
-			st = new StringTokenizer(line);
+		while(true) {
+			st = new StringTokenizer(br.readLine());
 			int N = Integer.parseInt(st.nextToken());
 			int M = Integer.parseInt(st.nextToken());
 			if(N == 0 && M == 0) break;
-			Set<Integer> hs = new HashSet<>();
+			hs = new HashSet<>();
 			arr = new int[N+1];
 			for (int i = 1; i < arr.length; i++) {
 				arr[i] = i;
@@ -51,12 +53,14 @@ public class BOJ4803 {
 				if(num > 0) hs.add(num);
 			}
 			if (hs.isEmpty()) {
-				System.out.println("Case 3: No trees.");
+				sb.append("Case "+tc+": No trees.\n");
 			} else if(hs.size() == 1) {
-				System.out.println("Case 2: There is one tree.");
+				sb.append("Case "+tc+": There is one tree.\n");
 			} else {
-				System.out.println("Case 1: A forest of "+hs.size()+" trees.");
+				sb.append("Case "+tc+": A forest of "+hs.size()+" trees.\n");
 			}
+			tc++;
 		}
+		System.out.println(sb);
 	}
 }
