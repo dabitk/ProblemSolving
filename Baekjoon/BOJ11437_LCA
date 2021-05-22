@@ -1,0 +1,80 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+public class Main {
+	static int nodeNum;
+	static ArrayList<ArrayList<Integer>> tree;
+	static int m;
+	static int[] depth;
+	static int[] parent;
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		//입력받기
+		nodeNum = Integer.parseInt(br.readLine());
+		tree = new ArrayList<ArrayList<Integer>>();
+		for(int i = 0; i < nodeNum+1; i++) {
+			tree.add(new ArrayList<Integer>());
+		}
+		
+		//주어진 노드들로 트리 만들기
+		for(int i = 0; i < nodeNum-1; i++) { //nodeNum - 1하는 이유는 간선의 개수 = 노드 개수 - 1이기 때문.
+			String[] temp = br.readLine().split(" ");
+			int a = Integer.parseInt(temp[0]);
+			int b = Integer.parseInt(temp[1]);
+			tree.get(a).add(b);
+			tree.get(b).add(a);
+		}
+		
+		depth = new int[nodeNum+1];
+		parent = new int[nodeNum+1];
+		m = Integer.parseInt(br.readLine());
+		
+		//노드들의 depth 구하기
+		dfs(1,1);
+		for (int i = 0; i < m; i++) {
+			//공통 조상을 구할 두 노드
+			String[] temp2 = br.readLine().split(" ");
+			int a = Integer.parseInt(temp2[0]);
+			int b = Integer.parseInt(temp2[1]);
+			
+			int same = solve(a, depth[a], b, depth[b]);
+			System.out.println(same);
+		}
+		
+		br.close();	
+	}
+	
+	public static int solve(int a, int a_depth, int b, int b_depth) {
+		//둘의 depth가 같아질 때까지 위로 올림.
+		if (a_depth > b_depth) {
+			while(a_depth != b_depth) {
+				a_depth--;
+				a = parent[a];
+			}
+		} else if (a_depth < b_depth) {
+			while(a_depth != b_depth) {
+				b_depth--;
+				b = parent[b];
+			}
+		}
+		
+		//같은 depth임에도 공통 조상에 도달하지 못한 경우는 둘다 한칸씩 부모 노드로 이동. 결국에는 공통 조상에서 만남.
+		while(a != b) {
+			a = parent[a];
+			b = parent[b];
+		}
+		
+		return a;
+	}
+	
+	public static void dfs(int from, int cnt) {
+		depth[from] = cnt++;
+		for (Integer next : tree.get(from)) {
+			if(depth[next] == 0) {
+				dfs(next, cnt); //아직 방문하지 않은 노드라면 dfs로 방문 하고 depth를 구함.
+				parent[next] = from; //dfs 대상 노드는 현재 노드의 자식으로 설정.
+			}
+		}
+	}
+}
