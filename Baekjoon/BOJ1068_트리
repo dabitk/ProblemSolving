@@ -1,0 +1,80 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class BOJ1068 {
+	
+	static List<List<Integer>> adjList = new ArrayList<>();
+	static boolean[] visited;
+	static int[] parent;
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		parent = new int[N+1];
+		visited = new boolean[N];
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int rootNode = 0;
+		for (int i = 0; i < N; i++) {
+			adjList.add(new ArrayList<Integer>());
+		}
+		for (int i = 0; i < N; i++) {
+			parent[i] = Integer.parseInt(st.nextToken());
+		}
+		for (int i = 0; i < N; i++) {
+			int v = parent[i];
+			
+			if(v == -1) {
+				//루트 노드.
+				rootNode = i;
+				continue;
+			}
+			
+			//부모 배열을 이용해서 인접리스트 생성.
+			
+			adjList.get(v).add(i);
+			adjList.get(v).add(i);
+		}
+		
+		int removeTarget = Integer.parseInt(br.readLine());
+		
+		bfs(removeTarget);
+		System.out.println(bfs(rootNode));
+	}
+	
+	public static int bfs(int target) {
+		Queue<Integer> q = new LinkedList<>();
+		int count = 0;
+		if(visited[target]) {
+			return 0;
+		}
+		q.add(target);
+		visited[target] = true;
+		while(!q.isEmpty()) {
+			target = q.poll();
+			boolean flag = false;
+			
+			for(int i = 0; i < adjList.get(target).size(); i++) {
+				int nextNode = adjList.get(target).get(i);
+				if(!visited[nextNode] && parent[target] != nextNode) {
+					//방문하지 않았고, 부모정점과 현재 정점이 같지 않다면 탐색
+					//방문했거나, 부모정점과 같다면 탐색할 필요 없음.
+					flag = true;
+					q.add(nextNode);
+					visited[nextNode] = true;
+				}
+			}
+			//정점을 기준으로 탐색을 하지 못했을 경우 리프노드.
+			if(!flag) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	
+}
