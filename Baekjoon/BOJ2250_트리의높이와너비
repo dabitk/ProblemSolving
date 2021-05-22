@@ -1,0 +1,89 @@
+package BOJ;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BOJ2250 {
+	//point : 현재 x좌표 (노드 방문 시마다 +1 증가)
+	static int point = 1;
+	static List<node> tree = new ArrayList<>();
+	static int[] levelMin;
+	static int[] levelMax;
+	static int maxLevel = 0; //트리의 최대 레벨(깊이)
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+		levelMin = new int[n+1];
+		levelMax = new int[n+1];
+		int rootIdx = 0;
+		for (int i = 0; i <= n; i++) {
+			tree.add(new node(i, -1, -1));
+			levelMin[i] = n;
+			levelMax[i] = 0;
+		}
+		for (int i = 0; i < n; i++) {
+			String[] cmd = br.readLine().split(" ");
+			int num = Integer.parseInt(cmd[0]);
+			int left = Integer.parseInt(cmd[1]);
+			int right = Integer.parseInt(cmd[2]);
+			tree.get(num).left = left;
+			tree.get(num).right = right;
+			if(left != -1) tree.get(left).parent = num;
+			if(right != -1) tree.get(right).parent = num;
+		}
+		for(int i = 1; i <= n; i++) {
+			if(tree.get(i).parent == -1) { //루트 노드를 찾은 경우.
+				rootIdx = i;
+				break;
+				
+			}
+		}
+
+		inOrder(rootIdx, 1);
+		
+		//완성된 levelMax[] 와 levelMin[]을 가지고 값을 뽑아내기
+		int answerLevel = 1;
+		int answerWidth = levelMax[1] - levelMin[1] + 1;
+		for (int i = 2; i <= maxLevel; i++) {
+			int width = levelMax[i] - levelMin[i] + 1;
+			if(answerWidth < width) {
+				answerLevel = i;
+				answerWidth = width;
+			}
+		}
+		System.out.println(answerLevel + " " + answerWidth);
+	}
+	
+	public static void inOrder(int rootIdx, int level) {
+		node root = tree.get(rootIdx);
+		if(maxLevel < level) maxLevel = level;
+		if(root.left != -1) {
+			inOrder(root.left, level+1);
+		}
+		//현재 노드가 가장 왼쪽 노드라면 갱신.
+		levelMin[level] = Math.min(levelMin[level], point);
+		//현재 노드는 이전노드보다 항상 x좌표가 더 높기 때문에 갱신
+		levelMax[level] = point;
+		point++;
+		if(root.right != -1) {
+			inOrder(root.right, level+1);
+		}
+	}
+	
+	static class node {
+		int parent;
+		int num;
+		int left;
+		int right;
+		
+		node(int num, int left, int right) {
+			this.parent = -1;
+			this.num = num;
+			this.left = left;
+			this.right = right;
+		}
+	}
+}
