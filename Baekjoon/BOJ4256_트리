@@ -1,0 +1,70 @@
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class BOJ4256 {
+    static int[] pre;
+    static int[] in;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        int t = Integer.parseInt(br.readLine());
+        while(t-->0) {
+            int n = Integer.parseInt(br.readLine());
+            pre = new int[n];
+            in = new int[n];
+            st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < n; i++) {
+                pre[i] = Integer.parseInt(st.nextToken());
+            }
+            st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < n; i++) {
+                in[i] = Integer.parseInt(st.nextToken());
+            }
+
+            postorder(pre,in);
+            System.out.println();
+        }
+    }
+
+    public static void postorder(int[] pre, int[] in) {
+        int num = pre.length;
+        if(num == 0) return;
+
+        int root = pre[0];
+
+        //left child 개수 찾기
+        int i;
+        for (i = 0; i < num; i++) {
+            if(root == in[i]) break;
+        }
+
+        int left = i;
+
+        //left가 0개면 방문할 필요 없음
+        if(left != 0) {
+            postorder(slice(pre, 1, left), slice(in, 0, left - 1));
+        }
+
+        //right = num - left - 1, right가 0개면 방문할 필요 없음
+        if(num - left - 1 != 0) {
+            postorder(slice(pre, left + 1, num - 1), slice(in, left + 1, num - 1));
+        }
+
+        System.out.print(root + " ");
+    }
+
+    static int[] slice(int[] x, int s, int e) {
+        int[] temp = new int[e - s + 1];
+        int j = 0;
+        for (int i = s; i <= e; i++) {
+            temp[j] = x[i];
+            j++;
+        }
+        return temp;
+    }
+}
