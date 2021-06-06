@@ -1,0 +1,287 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class Main {
+	static int N, M;
+	//static int[][] board;
+	static List<CCTV> cctvList = new ArrayList<>();
+	static int min = Integer.MAX_VALUE;
+	static class CCTV {
+		int x;
+		int y;
+		int type;
+		
+		public CCTV(int y, int x, int type) {
+			this.y = y;
+			this.x = x;
+			this.type = type;
+		}
+	}
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		int[][] board = new int[N][M];
+		for (int i = 0; i < N; i++) {
+			st = new StringTokenizer(br.readLine());
+			for (int j = 0; j < M; j++) {
+				int num = Integer.parseInt(st.nextToken());
+				board[i][j] = num;
+				if(num != 0 && num != 6) {
+					cctvList.add(new CCTV(i,j,num));
+				}
+			}
+		}
+		if(cctvList.size() != 0) {
+			dfs(board, 0);
+			System.out.println(min);
+		} else {
+			System.out.println(countZeroes(board));
+		}
+	}
+
+	public static int[][] deepCopyArr(int[][] tmp) {
+		int[][] newArr = new int[tmp.length][tmp[0].length];
+		for(int i = 0; i < tmp.length; i++) {
+			for(int j = 0; j < tmp[i].length; j++) {
+				newArr[i][j] = tmp[i][j];
+			}
+		}
+		return newArr;
+	}
+	public static void dfs(int[][] tmp,int cctvIdx) {
+		if (cctvIdx >= cctvList.size()) {
+			int numZeroes = countZeroes(tmp);
+			min = Math.min(numZeroes, min);
+//			System.out.println(numZeroes);
+			return;
+		} else {
+			for(int i = cctvIdx; i < cctvList.size(); i++) {
+				CCTV cctv = cctvList.get(i);
+//				System.out.println("HERE" + cctv.type+" x:"+cctv.x+" y:"+cctv.y);
+				switch(cctv.type) {
+					case 1:
+						for(int j = 0; j < 4; j++) {
+							int[][] newArr = deepCopyArr(tmp);
+//							for(int n = 0; n < tmp.length; n++) {
+//								for(int m = 0; m < tmp[n].length; m++) {
+//									System.out.print(tmp[n][m] + " ");
+//								}
+//								System.out.println();
+//							}
+//							System.out.println("----------------");
+							patternScan1(newArr, j, cctv.y, cctv.x);
+							dfs(newArr, i+1);
+						}
+						break;
+					case 2:
+						for(int j = 0; j < 2; j++) {
+							int[][] newArr = deepCopyArr(tmp);
+							patternScan2(newArr, j, cctv.y, cctv.x);
+							dfs(newArr, i+1);
+						}
+						break;
+					case 3:
+						for(int j = 0; j < 4; j++) {
+							int[][] newArr = deepCopyArr(tmp);
+							patternScan3(newArr, j, cctv.y, cctv.x);
+							dfs(newArr, i+1);
+						}
+						break;
+					case 4:
+						for(int j = 0; j < 4; j++) {
+							int[][] newArr = deepCopyArr(tmp);
+							patternScan4(newArr, j, cctv.y, cctv.x);
+							dfs(newArr, i+1);
+						}
+						break;						
+					case 5:
+						int[][] newArr = deepCopyArr(tmp);
+						patternScan5(newArr, cctv.y, cctv.x);
+						dfs(newArr, i+1);
+						break;
+				}
+			}
+		}
+	}
+	
+	public static void patternScan1(int[][] tmp, int dir, int y, int x) { //0 동, 1 서, 2 남, 3 북
+		//방향 0일때 ->
+		if (dir == 0) {
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+		} else if (dir == 1) { //1일때 <-
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+		} else if (dir == 2) { //2일때 V
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 3) { //3일때 ^
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		}
+	}
+	
+	public static void patternScan2(int[][] tmp, int dir, int y, int x) { //0 가로, 1 세로 
+		if (dir == 0) {
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+		} else if (dir == 1) {
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		}
+	}
+	
+	
+	public static void patternScan3(int[][] tmp, int dir, int y, int x) { //0 ㄴ, 1 ㄴ 반대, 2 ㄱ 반대, 3 ㄱ 
+		if (dir == 0) {
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 1) {
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 2) {
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 3) {
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		}
+	}
+	
+	public static void patternScan4(int[][] tmp, int dir, int y, int x) { //0 동, 1 서, 2 남, 3 북
+		if (dir == 0) {// ㅏ
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 1) { // ㅓ 
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 2) { // ㅜ
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i < tmp.length; i++) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		} else if (dir == 3) { // ㅗ  
+			for (int i = x; i >= 0; i--) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = x; i < tmp[0].length; i++) {
+				if (tmp[y][i] == 6) break;
+				if (tmp[y][i] == 0) tmp[y][i] = -1;
+			}
+			for (int i = y; i >= 0; i--) {
+				if (tmp[i][x] == 6) break;
+				if (tmp[i][x] == 0) tmp[i][x] = -1;
+			}
+		}
+	}
+	
+	public static void patternScan5(int[][] tmp, int y, int x) {
+		for (int i = x; i >= 0; i--) {
+			if (tmp[y][i] == 6) break;
+			if (tmp[y][i] == 0) tmp[y][i] = -1;
+		}
+		for (int i = x; i < tmp[0].length; i++) {
+			if (tmp[y][i] == 6) break;
+			if (tmp[y][i] == 0) tmp[y][i] = -1;
+		}
+		for (int i = y; i >= 0; i--) {
+			if (tmp[i][x] == 6) break;
+			if (tmp[i][x] == 0) tmp[i][x] = -1;
+		}
+		for (int i = y; i < tmp.length; i++) {
+			if (tmp[i][x] == 6) break;
+			if (tmp[i][x] == 0) tmp[i][x] = -1;
+		}
+	}
+	
+	public static int countZeroes(int[][] tmp) {
+		int cnt = 0;
+		for (int i = 0; i < tmp.length; i++) {
+			for (int j = 0; j < tmp[i].length; j++) {
+				if(tmp[i][j] == 0) {
+					cnt++;
+				}
+			}
+		}
+		return cnt;
+	}
+}
