@@ -1,0 +1,75 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class BOJ15684 {
+	static boolean[][] board = new boolean[101][101];
+	static int N;
+	static final int LEFT = 0;
+	static final int UP = 1;
+	static final int RIGHT = 2;
+	static final int DOWN = 3;
+	static int count = 0;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		StringTokenizer st;
+		while(N-->0) {
+			st = new StringTokenizer(br.readLine());
+			int x = Integer.parseInt(st.nextToken());
+			int y = Integer.parseInt(st.nextToken());
+			int dir = Integer.parseInt(st.nextToken());
+			int g = Integer.parseInt(st.nextToken());
+			List<Integer> dirList = makeDragonCurve(dir, g);
+			checkDragonCurve(y,x,dirList);
+		}
+		countSquares();
+		System.out.println(count);
+	}
+	public static void countSquares() {
+		for(int i = 0 ; i < board.length-1; i++) {
+			for(int j = 0; j < board[i].length-1; j++) {
+				if(board[i][j] && board[i+1][j+1] && board[i+1][j] && board[i][j+1]) {
+					count++;
+				}
+			}
+		}
+	}
+	public static void checkDragonCurve(int y, int x, List<Integer> dirList) {
+		board[y][x] = true;
+		for(int dir : dirList) {
+			switch(dir) {
+				case LEFT:
+					board[y][++x] = true;
+					break;
+				case UP:
+					board[--y][x] = true;
+					break;
+				case RIGHT:
+					board[y][--x] = true;
+					break;
+				case DOWN:
+					board[++y][x] = true;
+					break;
+			}
+		}
+	}
+	public static List<Integer> makeDragonCurve(int dir, int generation) {
+		List<Integer> list = new ArrayList<>();
+		list.add(dir);
+		while(generation-->0) {
+			List<Integer> tmp = new ArrayList<>();
+			for(Integer a : list) {
+				tmp.add(a);
+			}
+			for (int i = tmp.size()-1; i >= 0; i--) {
+				list.add((tmp.get(i)+1)%4);
+			}
+		}
+		//System.out.println("최종 드래곤 커브 : " + list.toString());
+		return list;
+	}
+}
